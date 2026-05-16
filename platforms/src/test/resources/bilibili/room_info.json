@@ -1,0 +1,19 @@
+{
+  "code": 0,
+  "message": "0",
+  "ttl": 1,
+  "data": {
+    "room_info": {
+      "room_id": 22603245,
+      "title": "Bilibili fixture live room",
+      "cover": "https://i0.hdslb.com/bfs/live/fixture-cover.jpg",
+      "keyframe": "https://i0.hdslb.com/bfs/live/fixture-keyframe.jpg"
+    },
+    "anchor_info": {
+      "base_info": {
+        "uname": "Fixture Anchor",
+        "face": "https://i0.hdslb.com/bfs/face/fixture-face.jpg"
+      }
+    }
+  }
+}
