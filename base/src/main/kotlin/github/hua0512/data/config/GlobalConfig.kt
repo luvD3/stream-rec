@@ -108,3 +108,12 @@ data class WeiboConfigGlobal(
   override val sourceFormat: VideoFormat? = VideoFormat.flv,
   override val downloadCheckInterval: Long? = null,
 ) : GlobalPlatformConfig, WeiboConfigDTO
+
+@Serializable
+data class BilibiliConfigGlobal(
+  override val cookies: String? = null,
+  override val fetchDelay: Long? = 0,
+  override val partedDownloadRetry: Int? = 0,
+  override val sourceFormat: VideoFormat? = VideoFormat.flv,
+  override val downloadCheckInterval: Long? = null,
+) : GlobalPlatformConfig, BilibiliConfigDTO

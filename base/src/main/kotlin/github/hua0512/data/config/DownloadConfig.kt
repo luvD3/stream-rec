@@ -248,4 +248,27 @@ sealed class DownloadConfig : DownloadConfigDTO {
     }
 
   }
+
+  @Serializable
+  @SerialName("bilibili")
+  data class BilibiliDownloadConfig(
+    override val sourceFormat: VideoFormat? = null,
+  ) : DownloadConfig(), BilibiliConfigDTO {
+
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (javaClass != other?.javaClass) return false
+
+      other as BilibiliDownloadConfig
+
+      if (sourceFormat != other.sourceFormat) return false
+
+      return super.equals(other)
+    }
+
+    override fun hashCode(): Int {
+      return sourceFormat?.hashCode() ?: 0
+    }
+
+  }
 }

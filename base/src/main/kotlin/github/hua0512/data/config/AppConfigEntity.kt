@@ -80,6 +80,8 @@ data class AppConfigEntity(
   val pandaTvConfig: PandaTvConfigGlobal = PandaTvConfigGlobal(),
   @ColumnInfo(name = "weiboConfig", defaultValue = "{}")
   val weiboConfig: WeiboConfigGlobal = WeiboConfigGlobal(),
+  @ColumnInfo(name = "bilibiliConfig", defaultValue = "{}")
+  val bilibiliConfig: BilibiliConfigGlobal = BilibiliConfigGlobal(),
   @ColumnInfo(name = "tlsVerification", defaultValue = "1")
   val tlsVerification: Boolean = true,
 )

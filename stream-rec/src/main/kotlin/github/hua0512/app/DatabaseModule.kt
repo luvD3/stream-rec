@@ -76,7 +76,7 @@ class DatabaseModule {
     )
 
     return builder
-      .addMigrations(Migrate3To4, Migrate11To12, Migrate12To13(json))
+      .addMigrations(Migrate3To4, Migrate11To12, Migrate12To13(json), Migrate14To15)
       .fallbackToDestructiveMigration(false)
       .fallbackToDestructiveMigrationOnDowngrade(false)
       .setDriver(BundledSQLiteDriver())
