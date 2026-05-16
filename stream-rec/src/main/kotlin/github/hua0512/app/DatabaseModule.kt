@@ -33,6 +33,7 @@ import dagger.Provides
 import github.hua0512.dao.AppDatabase
 import github.hua0512.dao.Migrate11To12
 import github.hua0512.dao.Migrate12To13
+import github.hua0512.dao.Migrate14To15
 import github.hua0512.dao.Migrate3To4
 import github.hua0512.dao.config.AppConfigDao
 import github.hua0512.dao.config.EngineConfigDao

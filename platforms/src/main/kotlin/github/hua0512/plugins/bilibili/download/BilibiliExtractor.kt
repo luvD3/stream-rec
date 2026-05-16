@@ -33,7 +33,6 @@ import github.hua0512.data.stream.StreamInfo
 import github.hua0512.plugins.base.Extractor
 import github.hua0512.plugins.base.ExtractorError
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -171,7 +170,7 @@ class BilibiliExtractor(override val http: HttpClient, override val json: Json, 
 
   private suspend fun HttpResponse.readApiDataObject(apiName: String): Result<JsonObject, ExtractorError> =
     runCatching {
-      body<JsonElement>().jsonObject
+      json.parseToJsonElement(bodyAsText()).jsonObject
     }.mapError {
       ExtractorError.InvalidResponse("$apiName response is not valid json")
     }.andThen { root ->
