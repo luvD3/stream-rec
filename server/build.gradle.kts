@@ -29,11 +29,16 @@ dependencies {
   implementation(libs.io.ktor.server.content.negotiation.jvm)
   implementation(libs.io.ktor.server.partial.content)
   implementation(libs.io.ktor.serialization.kotlinx.json.jvm)
+  implementation(libs.io.ktor.client.core)
   implementation(libs.com.michael.bull.kotlin.result)
   implementation(libs.io.ktor.server.websockets.jvm)
   implementation(libs.ch.qos.logback.classic)
   testImplementation(libs.bundles.test.jvm)
   testImplementation(libs.io.ktor.server.tests.jvm)
+}
+
+tasks.test {
+  useJUnitPlatform()
 }
 
 private fun execAndCapture(vararg command: String): String {
