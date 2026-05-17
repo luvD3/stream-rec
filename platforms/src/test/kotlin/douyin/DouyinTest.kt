@@ -46,7 +46,7 @@ class DouyinTest : BaseTest<DouyinStrevExtractor>({
     matchResult shouldNotBeNull {
       "failed to match id"
     }
-    matchResult!!.groupValues.last() shouldBeEqual "802975310822"
+    matchResult!!.groupValues.last() shouldBeEqual "838236729071"
   }
 
   test("isLive") {
@@ -79,7 +79,7 @@ class DouyinTest : BaseTest<DouyinStrevExtractor>({
 
 }) {
 
-  override val testUrl = "https://live.douyin.com/802975310822"
+  override val testUrl = "https://live.douyin.com/838236729071"
 
   override fun createExtractor(url: String) = DouyinStrevExtractor(app.client, app.json, testUrl)
 }
