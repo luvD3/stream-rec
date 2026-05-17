@@ -1,6 +1,7 @@
 package github.hua0512.backend.plugins
 
 import filesRoute
+import github.hua0512.app.HttpClientFactory
 import github.hua0512.backend.routes.*
 import github.hua0512.plugins.base.IExtractorFactory
 import github.hua0512.repo.AppConfigRepo
@@ -37,6 +38,15 @@ fun Application.configureRouting(
       call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
     }
   }
+
+  val bilibiliCookieVerifier = DefaultBilibiliCookieVerifier(
+    HttpClientFactory().getClient(json, installWebSockets = false),
+    json
+  )
+  monitor.subscribe(ApplicationStopped) {
+    bilibiliCookieVerifier.close()
+  }
+
   routing {
     get("/") {
       call.respondText("Hello World!")
@@ -52,10 +62,10 @@ fun Application.configureRouting(
         uploadRoute(json, uploadRepo)
         filesRoute(streamDataRepo)
         extractorRoutes(extractorFactory, json)
+        bilibiliCookieRoutes(json, bilibiliCookieVerifier)
         enginesRoute(engineConfigRepo)
       }
     }
 
   }
 }
-

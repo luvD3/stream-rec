@@ -1,0 +1,16 @@
+{
+  "code": 0,
+  "message": "0",
+  "ttl": 1,
+  "data": {
+    "room_id": 22603245,
+    "live_status": 1,
+    "playurl_info": {
+      "playurl": {
+        "cid": 22603245,
+        "g_qn_desc": [],
+        "stream": []
+      }
+    }
+  }
+}

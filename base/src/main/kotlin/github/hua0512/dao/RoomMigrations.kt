@@ -31,6 +31,7 @@ import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.execSQL
 import github.hua0512.data.stream.StreamerState
 import github.hua0512.utils.md5
 
@@ -131,5 +132,16 @@ object Migrate11To12 : Migration(11, 12) {
         }
       }
     }
+  }
+}
+
+object Migrate14To15 : Migration(14, 15) {
+
+  override fun migrate(connection: SQLiteConnection) {
+    connection.execSQL(
+      """
+        ALTER TABLE app_config ADD COLUMN bilibiliConfig TEXT NOT NULL DEFAULT '{}'
+      """.trimIndent()
+    )
   }
 }

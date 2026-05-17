@@ -29,6 +29,7 @@ package github.hua0512.services
 import github.hua0512.app.App
 import github.hua0512.plugins.base.Extractor
 import github.hua0512.plugins.base.IExtractorFactory
+import github.hua0512.plugins.bilibili.download.BilibiliExtractor
 import github.hua0512.plugins.douyin.download.DouyinStrevExtractor
 import github.hua0512.plugins.douyu.download.DouyuExtractor
 import github.hua0512.plugins.huya.download.HuyaExtractor
@@ -53,6 +54,7 @@ class ExtractorFactory(val app: App, val client: HttpClient, val json: Json) : I
     "www.pandalive.co" to PandaTvExtractor::class,
     "www.twitch.tv" to TwitchExtractor::class,
     "www.weibo.com" to WeiboExtractor::class,
+    "live.bilibili.com" to BilibiliExtractor::class,
   )
 
 

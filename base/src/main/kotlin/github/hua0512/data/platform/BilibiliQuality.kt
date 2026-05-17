@@ -3,7 +3,7 @@
  *
  * Stream-rec  https://github.com/hua0512/stream-rec
  *
- * Copyright (c) 2024 hua0512 (https://github.com/hua0512)
+ * Copyright (c) 2026 hua0512 (https://github.com/hua0512)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,32 +24,39 @@
  * SOFTWARE.
  */
 
-package github.hua0512.data.stream
+package github.hua0512.data.platform
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 /**
- * TODO : Use KSP to generate this class
+ * Bilibili live stream quality caps.
  */
-enum class StreamingPlatform(val id: Int) {
-  HUYA(0),
-  DOUYIN(1),
-  DOUYU(2),
-  TWITCH(3),
-  PANDATV(4),
-  WEIBO(5),
-  BILIBILI(6),
-  UNKNOWN(Int.MAX_VALUE);
+@Serializable(with = BilibiliQualitySerializer::class)
+enum class BilibiliQuality(val qn: Int) {
+  DOLBY(30000),
+  P4K(20000),
+  P2K(15000),
+  ORIGIN(10000),
+  BLUE(400),
+  SUPER(250),
+  HIGH(150),
+  SMOOTH(80),
+}
 
+object BilibiliQualitySerializer : KSerializer<BilibiliQuality> {
+  override val descriptor = PrimitiveSerialDescriptor("BilibiliQuality", PrimitiveKind.INT)
 
-  companion object {
-    fun fromId(id: Int): StreamingPlatform? {
-      for (platform in entries) {
-        if (platform.id == id) {
-          return platform
-        }
-      }
-      return null
-    }
+  override fun serialize(encoder: Encoder, value: BilibiliQuality) {
+    encoder.encodeInt(value.qn)
   }
 
+  override fun deserialize(decoder: Decoder): BilibiliQuality {
+    val qn = decoder.decodeInt()
+    return BilibiliQuality.entries.first { it.qn == qn }
+  }
 }
