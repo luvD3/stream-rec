@@ -29,6 +29,7 @@ package github.hua0512.data.config
 import github.hua0512.data.dto.DownloadConfigDTO
 import github.hua0512.data.dto.platform.*
 import github.hua0512.data.media.VideoFormat
+import github.hua0512.data.platform.BilibiliQuality
 import github.hua0512.data.platform.DouyinQuality
 import github.hua0512.data.platform.DouyuQuality
 import github.hua0512.data.platform.DouyuQualitySerializer
@@ -252,6 +253,7 @@ sealed class DownloadConfig : DownloadConfigDTO {
   @Serializable
   @SerialName("bilibili")
   data class BilibiliDownloadConfig(
+    override val quality: BilibiliQuality? = null,
     override val sourceFormat: VideoFormat? = null,
   ) : DownloadConfig(), BilibiliConfigDTO {
 
@@ -261,13 +263,16 @@ sealed class DownloadConfig : DownloadConfigDTO {
 
       other as BilibiliDownloadConfig
 
+      if (quality != other.quality) return false
       if (sourceFormat != other.sourceFormat) return false
 
       return super.equals(other)
     }
 
     override fun hashCode(): Int {
-      return sourceFormat?.hashCode() ?: 0
+      var result = quality?.hashCode() ?: 0
+      result = 31 * result + (sourceFormat?.hashCode() ?: 0)
+      return result
     }
 
   }

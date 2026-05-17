@@ -37,6 +37,7 @@ import github.hua0512.data.stream.StreamInfo
 import github.hua0512.plugins.base.ExtractorError
 import github.hua0512.plugins.danmu.base.Danmu
 import github.hua0512.plugins.download.base.PlatformDownloader
+import github.hua0512.utils.info
 import github.hua0512.utils.warn
 
 /**
@@ -63,13 +64,32 @@ class Bilibili(app: App, danmu: Danmu, override val extractor: BilibiliExtractor
       streams
     }
 
-    return Ok(
-      formatStreams.maxWith(
-        compareBy<StreamInfo> { it.currentQn() }
-          .thenBy { it.avcRank() }
-          .thenBy { it.bitrate }
-      )
+    val quality = downloadConfig.quality ?: app.config.bilibiliConfig.quality
+    val qualityStreams = quality?.let { selectedQuality ->
+      formatStreams.filter { it.currentQn() <= selectedQuality.qn }.ifEmpty {
+        warn(
+          "No Bilibili stream found under quality {}, using the best available",
+          selectedQuality.qn,
+        )
+        formatStreams
+      }
+    } ?: formatStreams
+
+    val selected = qualityStreams.maxWith(
+      compareBy<StreamInfo> { it.currentQn() }
+        .thenBy { it.bitrate }
+        .thenBy { it.avcRank() }
     )
+    info(
+      "selected Bilibili stream, target quality: {}, actual qn: {}, format: {}, codec: {}, bitrate: {}",
+      quality?.qn ?: "auto",
+      selected.currentQn(),
+      selected.format,
+      selected.extras["codec_name"] ?: selected.extras["codec"],
+      selected.bitrate,
+    )
+
+    return Ok(selected)
   }
 
   private fun StreamInfo.currentQn(): Int =

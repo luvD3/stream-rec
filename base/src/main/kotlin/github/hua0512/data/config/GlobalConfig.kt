@@ -29,6 +29,7 @@ package github.hua0512.data.config
 import github.hua0512.data.dto.GlobalPlatformConfig
 import github.hua0512.data.dto.platform.*
 import github.hua0512.data.media.VideoFormat
+import github.hua0512.data.platform.BilibiliQuality
 import github.hua0512.data.platform.DouyinQuality
 import github.hua0512.data.platform.DouyuQuality
 import github.hua0512.data.platform.DouyuQualitySerializer
@@ -112,6 +113,7 @@ data class WeiboConfigGlobal(
 @Serializable
 data class BilibiliConfigGlobal(
   override val cookies: String? = null,
+  override val quality: BilibiliQuality? = null,
   override val fetchDelay: Long? = 0,
   override val partedDownloadRetry: Int? = 0,
   override val sourceFormat: VideoFormat? = VideoFormat.flv,

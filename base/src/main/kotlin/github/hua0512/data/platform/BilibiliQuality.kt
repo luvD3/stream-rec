@@ -24,16 +24,39 @@
  * SOFTWARE.
  */
 
-package github.hua0512.data.dto.platform
+package github.hua0512.data.platform
 
-import github.hua0512.data.media.VideoFormat
-import github.hua0512.data.platform.BilibiliQuality
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 /**
- * Bilibili platform configuration.
+ * Bilibili live stream quality caps.
  */
-interface BilibiliConfigDTO {
-  val quality: BilibiliQuality?
-  val sourceFormat: VideoFormat?
-  val cookies: String?
+@Serializable(with = BilibiliQualitySerializer::class)
+enum class BilibiliQuality(val qn: Int) {
+  DOLBY(30000),
+  P4K(20000),
+  P2K(15000),
+  ORIGIN(10000),
+  BLUE(400),
+  SUPER(250),
+  HIGH(150),
+  SMOOTH(80),
+}
+
+object BilibiliQualitySerializer : KSerializer<BilibiliQuality> {
+  override val descriptor = PrimitiveSerialDescriptor("BilibiliQuality", PrimitiveKind.INT)
+
+  override fun serialize(encoder: Encoder, value: BilibiliQuality) {
+    encoder.encodeInt(value.qn)
+  }
+
+  override fun deserialize(decoder: Decoder): BilibiliQuality {
+    val qn = decoder.decodeInt()
+    return BilibiliQuality.entries.first { it.qn == qn }
+  }
 }
