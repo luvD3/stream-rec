@@ -28,19 +28,20 @@ RUN apt-get update -y && \
     /opt/venv/bin/pip install --no-cache-dir streamlink && \
     # Install streamlink twitch plugin
     mkdir -p /root/.local/share/streamlink/plugins && \
-    curl -L -o /root/.local/share/streamlink/plugins/twitch.py \
+    curl -fL -o /root/.local/share/streamlink/plugins/twitch.py \
         'https://github.com/2bc4/streamlink-ttvlol/releases/latest/download/twitch.py' && \
     # Install strev with architecture check
     ARCH=$(uname -m) && \
     if [ "$ARCH" = "x86_64" ]; then \
-        URL="https://github.com/hua0512/rust-srec/releases/latest/download/strev-linux-amd64"; \
+        STREV_ASSET="rust-srec-x86_64-unknown-linux-gnu"; \
     elif [ "$ARCH" = "aarch64" ]; then \
-        URL="https://github.com/hua0512/rust-srec/releases/latest/download/strev-linux-arm64"; \
+        STREV_ASSET="rust-srec-aarch64-unknown-linux-gnu"; \
     else \
         echo "Unsupported architecture: $ARCH" && exit 1; \
     fi && \
-    curl -L $URL -o /usr/local/bin/strev && \
+    curl -fL "https://github.com/hua0512/rust-srec/releases/latest/download/${STREV_ASSET}" -o /usr/local/bin/strev && \
     chmod +x /usr/local/bin/strev && \
+    [ "$(wc -c < /usr/local/bin/strev)" -gt 1000000 ] && \
     # Clean up to reduce image size
     apt-get clean && \
     rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* /var/log/* /usr/share/man /usr/share/doc
