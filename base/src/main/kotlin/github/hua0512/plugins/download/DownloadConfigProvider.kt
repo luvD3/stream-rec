@@ -97,12 +97,16 @@ fun <T : DownloadConfig> T.fillDownloadConfig(
         ?: appConfig.weiboConfig.sourceFormat,
     )
 
-    BILIBILI -> DownloadConfig.BilibiliDownloadConfig(
-      quality = (streamerConfig as DownloadConfig.BilibiliDownloadConfig).quality
-        ?: appConfig.bilibiliConfig.quality,
-      sourceFormat = (streamerConfig as DownloadConfig.BilibiliDownloadConfig).sourceFormat
-        ?: appConfig.bilibiliConfig.sourceFormat,
-    )
+    BILIBILI -> {
+      val bilibiliConfig = streamerConfig as DownloadConfig.BilibiliDownloadConfig
+      DownloadConfig.BilibiliDownloadConfig(
+        quality = bilibiliConfig.quality ?: appConfig.bilibiliConfig.quality,
+        sourceFormat = bilibiliConfig.sourceFormat ?: appConfig.bilibiliConfig.sourceFormat,
+        fetchDelay = bilibiliConfig.fetchDelay ?: appConfig.bilibiliConfig.fetchDelay,
+        partedDownloadRetry = bilibiliConfig.partedDownloadRetry ?: appConfig.bilibiliConfig.partedDownloadRetry,
+        downloadCheckInterval = bilibiliConfig.downloadCheckInterval ?: appConfig.bilibiliConfig.downloadCheckInterval,
+      )
+    }
 
     UNKNOWN -> throw UnsupportedOperationException("Platform not supported")
   } as T

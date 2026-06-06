@@ -35,5 +35,8 @@ import github.hua0512.data.platform.BilibiliQuality
 interface BilibiliConfigDTO {
   val quality: BilibiliQuality?
   val sourceFormat: VideoFormat?
+  val fetchDelay: Long?
+  val partedDownloadRetry: Int?
+  val downloadCheckInterval: Long?
   val cookies: String?
 }

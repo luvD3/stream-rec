@@ -255,6 +255,9 @@ sealed class DownloadConfig : DownloadConfigDTO {
   data class BilibiliDownloadConfig(
     override val quality: BilibiliQuality? = null,
     override val sourceFormat: VideoFormat? = null,
+    override val fetchDelay: Long? = null,
+    override val partedDownloadRetry: Int? = null,
+    override val downloadCheckInterval: Long? = null,
   ) : DownloadConfig(), BilibiliConfigDTO {
 
     override fun equals(other: Any?): Boolean {
@@ -265,6 +268,9 @@ sealed class DownloadConfig : DownloadConfigDTO {
 
       if (quality != other.quality) return false
       if (sourceFormat != other.sourceFormat) return false
+      if (fetchDelay != other.fetchDelay) return false
+      if (partedDownloadRetry != other.partedDownloadRetry) return false
+      if (downloadCheckInterval != other.downloadCheckInterval) return false
 
       return super.equals(other)
     }
@@ -272,6 +278,9 @@ sealed class DownloadConfig : DownloadConfigDTO {
     override fun hashCode(): Int {
       var result = quality?.hashCode() ?: 0
       result = 31 * result + (sourceFormat?.hashCode() ?: 0)
+      result = 31 * result + (fetchDelay?.hashCode() ?: 0)
+      result = 31 * result + (partedDownloadRetry ?: 0)
+      result = 31 * result + (downloadCheckInterval?.hashCode() ?: 0)
       return result
     }
 
