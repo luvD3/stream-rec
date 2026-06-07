@@ -81,7 +81,7 @@ fun Route.enginesRoute(engineConfigManager: EngineConfigRepo) {
       )
       val engineConfig = call.receive<EngineConfig>()
       val newConfig = engineConfigManager.updateEngineConfig(globalId, engineConfig)
-      logger.info("Updated engine config: $newConfig")
+      logger.info("Updated engine config: {}", newConfig.javaClass.simpleName)
       call.respond(HttpStatusCode.OK)
     }
   }

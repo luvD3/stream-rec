@@ -122,7 +122,7 @@ class DownloadPlatformService(
 
     scope.launch {
       downloadEngineConfigManager.streamConfigs(app.config.id).collect { newConfig ->
-        logger.debug("({}) new engine config detected: {}", platform, newConfig)
+        logger.debug("({}) new engine config detected: {}", platform, newConfig.javaClass.simpleName)
         streamerStates.values
           .asSequence()
           .filter {
@@ -366,4 +366,3 @@ class DownloadPlatformService(
   }
 
 }
-

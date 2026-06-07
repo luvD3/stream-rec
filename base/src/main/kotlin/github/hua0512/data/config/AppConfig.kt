@@ -115,3 +115,22 @@ data class AppConfig(
     tlsVerification,
   )
 }
+
+private const val LOG_REDACTED = "<redacted>"
+
+private fun String?.redactNullableForLog(): String? = if (isNullOrEmpty()) this else LOG_REDACTED
+
+private fun redactStringForLog(value: String): String = if (value.isEmpty()) value else LOG_REDACTED
+
+fun AppConfig.redactedForLog(): AppConfig = copy(
+  huyaConfig = huyaConfig.copy(cookies = huyaConfig.cookies.redactNullableForLog()),
+  douyinConfig = douyinConfig.copy(cookies = douyinConfig.cookies.redactNullableForLog()),
+  douyuConfig = douyuConfig.copy(cookies = douyuConfig.cookies.redactNullableForLog()),
+  twitchConfig = twitchConfig.copy(
+    authToken = redactStringForLog(twitchConfig.authToken),
+    cookies = twitchConfig.cookies.redactNullableForLog(),
+  ),
+  pandaTvConfig = pandaTvConfig.copy(cookies = pandaTvConfig.cookies.redactNullableForLog()),
+  weiboConfig = weiboConfig.copy(cookies = weiboConfig.cookies.redactNullableForLog()),
+  bilibiliConfig = bilibiliConfig.copy(cookies = bilibiliConfig.cookies.redactNullableForLog()),
+)
