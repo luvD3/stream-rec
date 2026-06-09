@@ -88,4 +88,18 @@ class BilibiliDownloadConfigSerializationTest : FunSpec({
     filled.partedDownloadRetry shouldBe 2
     filled.downloadCheckInterval shouldBe 3L
   }
+
+  test("should inherit Bilibili danmu setting from template config") {
+    val templateConfig = DownloadConfig.BilibiliDownloadConfig().apply {
+      danmu = true
+    }
+
+    val filled = DownloadConfig.BilibiliDownloadConfig().fillDownloadConfig(
+      platform = StreamingPlatform.BILIBILI,
+      templateConfig = templateConfig,
+      appConfig = AppConfig(danmu = false),
+    )
+
+    filled.danmu shouldBe true
+  }
 })

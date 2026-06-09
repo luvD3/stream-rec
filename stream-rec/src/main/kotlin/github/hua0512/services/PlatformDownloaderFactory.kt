@@ -28,6 +28,7 @@ package github.hua0512.services
 
 import github.hua0512.app.App
 import github.hua0512.data.stream.StreamingPlatform
+import github.hua0512.plugins.bilibili.danmu.BilibiliDanmu
 import github.hua0512.plugins.bilibili.download.Bilibili
 import github.hua0512.plugins.bilibili.download.BilibiliExtractor
 import github.hua0512.plugins.danmu.base.NoDanmu
@@ -77,7 +78,7 @@ object PlatformDownloaderFactory : IPlatformDownloaderFactory {
     StreamingPlatform.TWITCH -> Twitch(app, TwitchDanmu(app), TwitchExtractor(app.client, app.json, url))
     StreamingPlatform.PANDATV -> PandaTv(app, PandaTvDanmu(app), PandaTvExtractor(app.client, app.json, url))
     StreamingPlatform.WEIBO -> Weibo(app, NoDanmu(app), WeiboExtractor(app.client, app.json, url))
-    StreamingPlatform.BILIBILI -> Bilibili(app, NoDanmu(app), BilibiliExtractor(app.client, app.json, url))
+    StreamingPlatform.BILIBILI -> Bilibili(app, BilibiliDanmu(app), BilibiliExtractor(app.client, app.json, url))
     else -> throw IllegalArgumentException("Platform not supported")
   }
 }

@@ -81,6 +81,7 @@ org-jetbrains-kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serial
 org-jetbrains-kotlinx-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0"
 org-jetbrains-kotlinx-serialization-protobuf = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.9.0"
 org-openjdk-nashorn-nashorn-core = "org.openjdk.nashorn:nashorn-core:15.7"
+org-brotli-dec = "org.brotli:dec:0.1.2"
 
 org-junit-jupiter-junit-jupiter = "org.junit.jupiter:junit-jupiter:6.0.1"
 
