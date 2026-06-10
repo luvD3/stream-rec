@@ -33,10 +33,54 @@ import github.hua0512.repo.stream.StreamDataRepo
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.put
+import playbackContentType
+import streamDataHashWithExtension
+import java.io.File
+import java.nio.file.Path
+
+@Serializable
+data class PlaybackFile(
+  val name: String,
+  val hash: String,
+  val url: String,
+  val size: Long,
+  val contentType: String,
+  val format: String,
+  val exists: Boolean,
+)
+
+@Serializable
+data class PlaybackManifest(
+  val id: Long,
+  val title: String,
+  val streamerName: String,
+  val dateStart: Long? = null,
+  val dateEnd: Long? = null,
+  val video: PlaybackFile,
+  val danmu: PlaybackFile? = null,
+)
+
+private fun playbackFileFor(id: Long, path: String): PlaybackFile {
+  val file = File(path)
+  val fileName = Path.of(path).fileName.toString()
+  val hash = streamDataHashWithExtension(path)
+  val format = fileName.substringAfterLast('.', "").lowercase()
+
+  return PlaybackFile(
+    name = fileName,
+    hash = hash,
+    url = "/files/$id/$hash",
+    size = if (file.exists()) file.length() else 0,
+    contentType = playbackContentType(fileName),
+    format = format,
+    exists = file.exists(),
+  )
+}
 
 /**
  * @author hua0512
@@ -77,6 +121,33 @@ fun Route.streamsRoute(json: Json, streamsRepo: StreamDataRepo) {
         logger.error("Failed to get stream data", e)
         call.respond(HttpStatusCode.InternalServerError, "Failed to get stream data")
       }
+    }
+
+    get("{id}/playback") {
+      val id = call.parameters["id"]?.toLongOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest, "Invalid id")
+      val streamData = streamsRepo.getStreamDataById(StreamDataId(id))
+      if (streamData == null) {
+        call.respond(HttpStatusCode.NotFound, "Stream data not found")
+        return@get
+      }
+
+      val video = playbackFileFor(id, streamData.outputFilePath)
+      if (!video.exists) {
+        call.respond(HttpStatusCode.NotFound, "Video file not found")
+        return@get
+      }
+
+      call.respond(
+        PlaybackManifest(
+          id = id,
+          title = streamData.title,
+          streamerName = streamData.streamerName,
+          dateStart = streamData.dateStart,
+          dateEnd = streamData.dateEnd,
+          video = video,
+          danmu = streamData.danmuFilePath?.let { playbackFileFor(id, it) }?.takeIf { it.exists },
+        )
+      )
     }
 
     get("{id}") {

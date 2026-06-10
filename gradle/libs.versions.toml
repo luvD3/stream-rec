@@ -1,6 +1,6 @@
 [versions]
 ktor = "3.3.3"
-ktor-test = "2.3.13"
+ktor-test = "3.3.3"
 ksp = "2.3.3"
 kotlin = "2.2.21"
 kotlin-atomicfu = "0.29.0"
@@ -51,7 +51,7 @@ io-ktor-server-auto-head-response = { module = "io.ktor:ktor-server-auto-head-re
 io-ktor-server-partial-content = { module = "io.ktor:ktor-server-partial-content", version.ref = "ktor" }
 io-ktor-server-websockets-jvm = { module = "io.ktor:ktor-server-websockets-jvm", version.ref = "ktor" }
 io-ktor-server-netty-jvm = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
-io-ktor-server-tests-jvm = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "ktor-test" }
+io-ktor-server-tests-jvm = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor-test" }
 
 io-kotest-kotest-runner-junit5 = "io.kotest:kotest-runner-junit5:6.0.5"
 
