@@ -29,19 +29,29 @@ package github.hua0512.backend.routes
 import github.hua0512.backend.logger
 import github.hua0512.data.StreamDataId
 import github.hua0512.data.StreamerId
+import github.hua0512.flv.FlvMetaInfoProvider
+import github.hua0512.flv.operators.analyze
+import github.hua0512.flv.utils.asFlvFlow
+import github.hua0512.plugins.StreamerContext
 import github.hua0512.repo.stream.StreamDataRepo
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.put
+import kotlinx.io.asSource
+import kotlinx.io.buffered
 import playbackContentType
 import streamDataHashWithExtension
 import java.io.File
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
 
 @Serializable
 data class PlaybackFile(
@@ -64,6 +74,65 @@ data class PlaybackManifest(
   val video: PlaybackFile,
   val danmu: PlaybackFile? = null,
 )
+
+@Serializable
+data class PlaybackFlvSeekIndex(
+  val format: String = "flv",
+  val duration: Double,
+  val fileSize: Long,
+  val times: List<Long>,
+  val filepositions: List<Long>,
+  val keyframeCount: Int,
+)
+
+private data class PlaybackFlvSeekIndexCacheKey(
+  val path: String,
+  val size: Long,
+  val modified: Long,
+)
+
+private object PlaybackFlvSeekIndexCache {
+  private val cache = ConcurrentHashMap<PlaybackFlvSeekIndexCacheKey, PlaybackFlvSeekIndex>()
+
+  suspend fun get(file: File, title: String, streamerName: String): PlaybackFlvSeekIndex = withContext(Dispatchers.IO) {
+    val key = PlaybackFlvSeekIndexCacheKey(
+      path = file.canonicalPath,
+      size = file.length(),
+      modified = file.lastModified(),
+    )
+    cache[key] ?: analyze(file, title, streamerName).also { cache[key] = it }
+  }
+
+  private suspend fun analyze(file: File, title: String, streamerName: String): PlaybackFlvSeekIndex {
+    val provider = FlvMetaInfoProvider()
+    val context = StreamerContext(
+      name = streamerName.ifBlank { file.nameWithoutExtension },
+      title = title,
+      platform = "local",
+    )
+
+    file.inputStream().asSource().buffered().use { source ->
+      source.asFlvFlow()
+        .analyze(provider, context)
+        .collect()
+    }
+
+    val metaInfo = provider[0]
+    val fileLength = file.length()
+    val keyframes = metaInfo?.keyframes.orEmpty()
+      .filter { it.filePosition >= 0 && it.filePosition < fileLength }
+      .distinctBy { it.timestamp }
+      .sortedBy { it.timestamp }
+
+    return PlaybackFlvSeekIndex(
+      duration = metaInfo?.duration ?: 0.0,
+      fileSize = metaInfo?.fileSize ?: file.length(),
+      times = keyframes.map { it.timestamp },
+      filepositions = keyframes.map { it.filePosition },
+      keyframeCount = keyframes.size,
+    )
+  }
+}
 
 private fun playbackFileFor(id: Long, path: String): PlaybackFile {
   val file = File(path)
@@ -148,6 +217,39 @@ fun Route.streamsRoute(json: Json, streamsRepo: StreamDataRepo) {
           danmu = streamData.danmuFilePath?.let { playbackFileFor(id, it) }?.takeIf { it.exists },
         )
       )
+    }
+
+    get("{id}/playback/flv-index") {
+      val id = call.parameters["id"]?.toLongOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest, "Invalid id")
+      val streamData = streamsRepo.getStreamDataById(StreamDataId(id))
+      if (streamData == null) {
+        call.respond(HttpStatusCode.NotFound, "Stream data not found")
+        return@get
+      }
+
+      val video = File(streamData.outputFilePath)
+      if (!video.exists()) {
+        call.respond(HttpStatusCode.NotFound, "Video file not found")
+        return@get
+      }
+
+      if (video.extension.lowercase() != "flv") {
+        call.respond(HttpStatusCode.BadRequest, "Playback seek index is only supported for FLV files")
+        return@get
+      }
+
+      try {
+        call.respond(
+          PlaybackFlvSeekIndexCache.get(
+            file = video,
+            title = streamData.title,
+            streamerName = streamData.streamerName,
+          )
+        )
+      } catch (e: Exception) {
+        logger.error("Failed to build FLV playback seek index for stream data {}", id, e)
+        call.respond(HttpStatusCode.InternalServerError, "Failed to build FLV playback seek index")
+      }
     }
 
     get("{id}") {

@@ -18,10 +18,12 @@ import io.ktor.server.routing.routing
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import streamDataHashWithExtension
 import kotlin.io.path.createTempFile
+import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
 
 class StreamPlaybackRouteTest : FunSpec({
@@ -107,7 +109,56 @@ class StreamPlaybackRouteTest : FunSpec({
       response.bodyAsText() shouldBe "2345"
     }
   }
+
+  test("returns FLV playback seek index") {
+    val video = minimalFlvWithKeyframe()
+
+    testApplication {
+      application {
+        configureSerialization()
+        routingWith(FakeStreamDataRepo(record(video.absolutePath, null)))
+      }
+
+      val response = client.get("/api/streams/1/playback/flv-index")
+
+      response.status shouldBe HttpStatusCode.OK
+      val body = json.parseToJsonElement(response.bodyAsText()).jsonObject
+      body["format"]?.jsonPrimitive?.content shouldBe "flv"
+      body["keyframeCount"]?.jsonPrimitive?.content shouldBe "1"
+      body["times"]?.jsonArray?.first()?.jsonPrimitive?.content shouldBe "0"
+      body["filepositions"]?.jsonArray?.first()?.jsonPrimitive?.content shouldBe "13"
+    }
+  }
+
+  test("rejects FLV seek index for non-FLV files") {
+    val video = createTempFile(suffix = ".mp4").apply {
+      writeText("video-data")
+    }.toFile()
+
+    testApplication {
+      application {
+        configureSerialization()
+        routingWith(FakeStreamDataRepo(record(video.absolutePath, null)))
+      }
+
+      client.get("/api/streams/1/playback/flv-index").status shouldBe HttpStatusCode.BadRequest
+    }
+  }
 })
+
+private fun minimalFlvWithKeyframe() = createTempFile(suffix = ".flv").apply {
+  writeBytes(
+    byteArrayOf(
+      0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09,
+      0x00, 0x00, 0x00, 0x00,
+      0x09, 0x00, 0x00, 0x05,
+      0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00,
+      0x17, 0x02, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x10,
+    )
+  )
+}.toFile()
 
 private fun io.ktor.server.application.Application.routingWith(repo: StreamDataRepo) {
   routing {
