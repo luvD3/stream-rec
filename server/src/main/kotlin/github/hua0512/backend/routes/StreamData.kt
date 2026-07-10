@@ -51,7 +51,6 @@ import playbackContentType
 import streamDataHashWithExtension
 import java.io.File
 import java.nio.file.Path
-import java.util.concurrent.ConcurrentHashMap
 
 @Serializable
 data class PlaybackFile(
@@ -92,7 +91,7 @@ private data class PlaybackFlvSeekIndexCacheKey(
 )
 
 private object PlaybackFlvSeekIndexCache {
-  private val cache = ConcurrentHashMap<PlaybackFlvSeekIndexCacheKey, PlaybackFlvSeekIndex>()
+  private val cache = SuspendSingleFlightCache<PlaybackFlvSeekIndexCacheKey, PlaybackFlvSeekIndex>()
 
   suspend fun get(file: File, title: String, streamerName: String): PlaybackFlvSeekIndex = withContext(Dispatchers.IO) {
     val key = PlaybackFlvSeekIndexCacheKey(
@@ -100,7 +99,7 @@ private object PlaybackFlvSeekIndexCache {
       size = file.length(),
       modified = file.lastModified(),
     )
-    cache[key] ?: analyze(file, title, streamerName).also { cache[key] = it }
+    cache.getOrPut(key) { analyze(file, title, streamerName) }
   }
 
   private suspend fun analyze(file: File, title: String, streamerName: String): PlaybackFlvSeekIndex {
