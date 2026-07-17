@@ -7,4 +7,6 @@ docs
 *.war
 *.log
 *.db
+db/
+logs/
 .env*.local

@@ -36,6 +36,10 @@ import github.hua0512.plugins.douyin.download.DouyinStrevExtractor
 import io.exoquery.kmp.pprint
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.nulls.shouldNotBeNull
+import kotlinx.coroutines.withTimeoutOrNull
+import java.io.File
+
+private const val DANMU_FETCH_TIMEOUT_MILLIS = 5_000L
 
 class DouyinTest : BaseTest<DouyinStrevExtractor>({
 
@@ -46,7 +50,7 @@ class DouyinTest : BaseTest<DouyinStrevExtractor>({
     matchResult shouldNotBeNull {
       "failed to match id"
     }
-    matchResult!!.groupValues.last() shouldBeEqual "802975310822"
+    matchResult!!.groupValues.last() shouldBeEqual "838236729071"
   }
 
   test("isLive") {
@@ -66,20 +70,25 @@ class DouyinTest : BaseTest<DouyinStrevExtractor>({
 
     val danmu = DouyinDanmu(app).apply {
       enableWrite = false
-      filePath = "douyin_danmu.txt"
+      filePath = File("build/tmp/douyin_danmu.txt").apply {
+        parentFile.mkdirs()
+      }.path
       idStr = extractor.idStr
     }
     val init = danmu.init(Streamer(0, "test", testUrl, downloadConfig = DownloadConfig.DouyinDownloadConfig()))
-    if (init) {
-      danmu.fetchDanmu()
-    }
-
+    init shouldBeEqual true
     danmu.isInitialized.get() shouldBeEqual true
+
+    if (init) {
+      withTimeoutOrNull(DANMU_FETCH_TIMEOUT_MILLIS) {
+        danmu.fetchDanmu()
+      }
+    }
   }
 
 }) {
 
-  override val testUrl = "https://live.douyin.com/802975310822"
+  override val testUrl = "https://live.douyin.com/838236729071"
 
   override fun createExtractor(url: String) = DouyinStrevExtractor(app.client, app.json, testUrl)
 }

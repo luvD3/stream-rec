@@ -131,6 +131,16 @@ class Converters {
   }
 
   @TypeConverter
+  fun fromBilibiliGlobalConfig(value: String?): BilibiliConfigGlobal? {
+    return value?.let { json.decodeFromString(it) }
+  }
+
+  @TypeConverter
+  fun toBilibiliGlobalConfig(value: BilibiliConfigGlobal?): String? {
+    return value?.let { json.encodeToString(it) }
+  }
+
+  @TypeConverter
   fun fromDownloadConfig(value: String?): DownloadConfig? {
     return value?.let { json.decodeFromString(it) }
   }

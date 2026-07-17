@@ -27,6 +27,7 @@
 package github.hua0512.app
 
 import github.hua0512.data.config.AppConfig
+import github.hua0512.data.config.redactedForLog
 import io.ktor.client.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -53,7 +54,7 @@ class App(val json: Json, val client: HttpClient) {
     val previous = appFlow.value
     val isChanged = previous != config
     if (isChanged) {
-      logger.info("App config changed : {}", config)
+      logger.info("App config changed : {}", config.redactedForLog())
     }
     this._appFlow.value = config
   }

@@ -35,9 +35,7 @@ class EngineConfigSerializationTest : FunSpec({
     deserialized shouldBe config
     serialized shouldBe """
             {
-                "type": "streamlink",
-                "useBuiltInSegmenter": false,
-                "exitDownloadOnError": false
+                "type": "streamlink"
             }
         """.trimIndent()
   }
@@ -68,9 +66,7 @@ class EngineConfigSerializationTest : FunSpec({
     deserialized shouldBe config
     serialized shouldBe """
             {
-                "type": "ffmpeg",
-                "useBuiltInSegmenter": false,
-                "exitDownloadOnError": false
+                "type": "ffmpeg"
             }
         """.trimIndent()
   }

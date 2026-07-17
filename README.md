@@ -33,11 +33,11 @@ It's powered by Kotlin, [Ktor](https://ktor.io/), and [ffmpeg](https://ffmpeg.or
 |  Twitch   |     ✅     |   ✅   |                       `https://www.twitch.tv/{room}`                       |
 |   Weibo   |     ✅     |   ❌   | `https://weibo.com/u/{uid}` or  `https://weibo.com/l/wblive/p/show/{room}` |     
 | AfreecaTv |     ❌     |   ❌   |                                                                            |
-| Bilibili  |     ✅     |   ❌   |                     `https://live.bilibili.com/{roomId}`                   |
+| Bilibili  |     ✅     |   ✅   |                     `https://live.bilibili.com/{roomId}`                   |
 | Niconico  |     ❌     |   ❌   |                                                                            |
 |  Youtube  |     ❌     |   ❌   |                                                                            |
 
-- Bilibili recording uses a manual Cookie string, supports read-only Cookie verification, and records the highest actual quality returned by Bilibili. Bilibili Danmu recording is not supported yet.
+- Bilibili recording uses a manual Cookie string, supports read-only Cookie verification, records the highest actual quality returned by Bilibili, and supports plain text Danmu recording for public live rooms.
 - More services will be supported in the future (if I have time, PRs are welcomed).
 
 # Screenshots

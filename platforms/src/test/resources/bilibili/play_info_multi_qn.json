@@ -1,0 +1,106 @@
+{
+  "code": 0,
+  "message": "0",
+  "ttl": 1,
+  "data": {
+    "room_id": 22603245,
+    "live_status": 1,
+    "playurl_info": {
+      "playurl": {
+        "cid": 22603245,
+        "g_qn_desc": [
+          { "qn": 20000, "desc": "4K", "hdr_desc": "" },
+          { "qn": 10000, "desc": "Original", "hdr_desc": "" },
+          { "qn": 400, "desc": "BlueRay", "hdr_desc": "" }
+        ],
+        "stream": [
+          {
+            "protocol_name": "http_stream",
+            "format": [
+              {
+                "format_name": "flv",
+                "codec": [
+                  {
+                    "codec_name": "hevc",
+                    "current_qn": 20000,
+                    "accept_qn": [20000, 10000, 400],
+                    "base_url": "/live-bvc/fixture_20000_hevc.flv",
+                    "url_info": [
+                      {
+                        "host": "https://cn-live.example.com",
+                        "extra": "?codec=hevc&qn=20000",
+                        "stream_ttl": 3600
+                      }
+                    ]
+                  },
+                  {
+                    "codec_name": "avc",
+                    "current_qn": 20000,
+                    "accept_qn": [20000, 10000, 400],
+                    "base_url": "/live-bvc/fixture_20000_avc.flv",
+                    "url_info": [
+                      {
+                        "host": "https://cn-live.example.com",
+                        "extra": "?codec=avc&qn=20000",
+                        "stream_ttl": 3600
+                      }
+                    ]
+                  },
+                  {
+                    "codec_name": "avc",
+                    "current_qn": 400,
+                    "accept_qn": [400],
+                    "base_url": "/live-bvc/fixture_400_avc.flv",
+                    "url_info": [
+                      {
+                        "host": "https://cn-live.example.com",
+                        "extra": "?codec=avc&qn=400",
+                        "stream_ttl": 3600
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "protocol_name": "http_hls",
+            "format": [
+              {
+                "format_name": "fmp4",
+                "codec": [
+                  {
+                    "codec_name": "avc",
+                    "current_qn": 10000,
+                    "accept_qn": [10000, 400],
+                    "base_url": "/live-bvc/fixture_10000_avc/index.m3u8",
+                    "url_info": [
+                      {
+                        "host": "https://cn-hls.example.com",
+                        "extra": "?codec=avc&qn=10000",
+                        "stream_ttl": 3600
+                      }
+                    ]
+                  },
+                  {
+                    "codec_name": "hevc",
+                    "current_qn": 10000,
+                    "accept_qn": [10000, 400],
+                    "base_url": "/live-bvc/fixture_10000_hevc/index.m3u8",
+                    "url_info": [
+                      {
+                        "host": "https://cn-hls.example.com",
+                        "extra": "?codec=hevc&qn=10000",
+                        "stream_ttl": 3600
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

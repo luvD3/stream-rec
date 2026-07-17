@@ -1,0 +1,78 @@
+{
+  "site": "https://live.bilibili.com/22603245",
+  "title": "Bilibili fixture live room",
+  "artist": "Fixture Anchor",
+  "coverUrl": "https://i0.hdslb.com/bfs/live/fixture-cover.jpg",
+  "artistImageUrl": "https://i0.hdslb.com/bfs/face/fixture-face.jpg",
+  "live": true,
+  "streams": [
+    {
+      "url": "https://cn-live.example.com/live-bvc/fixture_20000_hevc.flv?codec=hevc&qn=20000",
+      "format": "flv",
+      "quality": "4K",
+      "bitrate": 20000,
+      "priority": 100,
+      "frameRate": 0.0,
+      "extras": {
+        "codec": "hevc",
+        "qn": "20000"
+      },
+      "isHeadersNeeded": true
+    },
+    {
+      "url": "https://cn-live.example.com/live-bvc/fixture_20000_avc.flv?codec=avc&qn=20000",
+      "format": "flv",
+      "quality": "4K",
+      "bitrate": 20000,
+      "priority": 100,
+      "frameRate": 0.0,
+      "extras": {
+        "codec": "avc",
+        "qn": "20000"
+      },
+      "isHeadersNeeded": true
+    },
+    {
+      "url": "https://cn-live.example.com/live-bvc/fixture_400_avc.flv?codec=avc&qn=400",
+      "format": "flv",
+      "quality": "BlueRay",
+      "bitrate": 400,
+      "priority": 100,
+      "frameRate": 0.0,
+      "extras": {
+        "codec": "avc",
+        "qn": "400"
+      },
+      "isHeadersNeeded": true
+    },
+    {
+      "url": "https://cn-hls.example.com/live-bvc/fixture_10000_avc/index.m3u8?codec=avc&qn=10000",
+      "format": "hls",
+      "quality": "Original",
+      "bitrate": 10000,
+      "priority": 90,
+      "frameRate": 0.0,
+      "extras": {
+        "codec": "avc",
+        "qn": "10000"
+      },
+      "isHeadersNeeded": true
+    },
+    {
+      "url": "https://cn-hls.example.com/live-bvc/fixture_10000_hevc/index.m3u8?codec=hevc&qn=10000",
+      "format": "hls",
+      "quality": "Original",
+      "bitrate": 10000,
+      "priority": 90,
+      "frameRate": 0.0,
+      "extras": {
+        "codec": "hevc",
+        "qn": "10000"
+      },
+      "isHeadersNeeded": true
+    }
+  ],
+  "extras": {
+    "roomId": "22603245"
+  }
+}
