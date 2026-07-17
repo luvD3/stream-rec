@@ -84,7 +84,7 @@ import github.hua0512.data.user.UserEntity
 abstract class AppDatabase : RoomDatabase() {
 
   companion object {
-    const val DATABASE_VERSION = 14
+    const val DATABASE_VERSION = 15
   }
 
   abstract fun getConfigDao(): AppConfigDao

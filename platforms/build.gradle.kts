@@ -49,6 +49,7 @@ dependencies {
   implementation(libs.com.michael.bull.kotlin.result)
   implementation(libs.org.jetbrains.kotlinx.datetime)
   implementation(libs.org.jetbrains.kotlinx.atomicfu)
+  implementation(libs.org.brotli.dec)
 //  implementation(libs.org.jetbrains.kotlinx.serialization.core)
   implementation(libs.org.openjdk.nashorn.nashorn.core)
   testImplementation(libs.bundles.test.jvm)

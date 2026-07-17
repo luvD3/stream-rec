@@ -97,6 +97,17 @@ fun <T : DownloadConfig> T.fillDownloadConfig(
         ?: appConfig.weiboConfig.sourceFormat,
     )
 
+    BILIBILI -> {
+      val bilibiliConfig = streamerConfig as DownloadConfig.BilibiliDownloadConfig
+      DownloadConfig.BilibiliDownloadConfig(
+        quality = bilibiliConfig.quality ?: appConfig.bilibiliConfig.quality,
+        sourceFormat = bilibiliConfig.sourceFormat ?: appConfig.bilibiliConfig.sourceFormat,
+        fetchDelay = bilibiliConfig.fetchDelay ?: appConfig.bilibiliConfig.fetchDelay,
+        partedDownloadRetry = bilibiliConfig.partedDownloadRetry ?: appConfig.bilibiliConfig.partedDownloadRetry,
+        downloadCheckInterval = bilibiliConfig.downloadCheckInterval ?: appConfig.bilibiliConfig.downloadCheckInterval,
+      )
+    }
+
     UNKNOWN -> throw UnsupportedOperationException("Platform not supported")
   } as T
 
@@ -147,5 +158,6 @@ fun StreamingPlatform.globalConfig(config: AppConfig): GlobalPlatformConfig = wh
   TWITCH -> config.twitchConfig
   PANDATV -> config.pandaTvConfig
   WEIBO -> config.weiboConfig
+  BILIBILI -> config.bilibiliConfig
   else -> throw UnsupportedOperationException("Platform not supported")
 }

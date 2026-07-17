@@ -18,8 +18,6 @@ import io.ktor.utils.io.CancellationException
 import kotlinx.serialization.Serializable
 import java.io.File
 import java.nio.file.Path
-import java.security.MessageDigest
-import kotlin.text.Charsets
 
 @Serializable
 data class StreamDataFiles(
@@ -62,12 +60,8 @@ fun Route.filesRoute(streamDataRepo: StreamDataRepo) {
         streamData.outputFilePath?.let { path ->
           val file = File(path)
           val fileName = Path.of(path).fileName.toString()
-          val contentType = when {
-            fileName.endsWith(".mp4") -> "video/mp4"
-            fileName.endsWith(".flv") -> "video/x-flv"
-            else -> "application/octet-stream"
-          }
-          val hash = generateFileHash(id, path, "video")
+          val contentType = playbackContentType(fileName)
+          val hash = streamDataFileHash(path)
           files.add(
             FileInfo(
               name = fileName,
@@ -84,7 +78,7 @@ fun Route.filesRoute(streamDataRepo: StreamDataRepo) {
         streamData.danmuFilePath?.let { path ->
           val file = File(path)
           val fileName = Path.of(path).fileName.toString()
-          val hash = generateFileHash(id, path, "danmu")
+          val hash = streamDataFileHash(path)
           files.add(
             FileInfo(
               name = fileName,
@@ -116,17 +110,14 @@ fun Route.filesRoute(streamDataRepo: StreamDataRepo) {
         return null to "Invalid file format"
       }
 
-      val hash = hashWithExt.substring(0, lastDotIndex)
       val extension = hashWithExt.substring(lastDotIndex)
 
       // Check video file
       val videoHash = streamData.outputFilePath?.let { path ->
-        val ext = Path.of(path).fileName.toString().substringAfterLast('.')
-        "${generateFileHash(id, path, "video")}.$ext"
+        streamDataHashWithExtension(path)
       }
       val danmuHash = streamData.danmuFilePath?.let { path ->
-        val ext = Path.of(path).fileName.toString().substringAfterLast('.')
-        "${generateFileHash(id, path, "danmu")}.$ext"
+        streamDataHashWithExtension(path)
       }
 
       val filePath = when (hashWithExt) {
@@ -169,7 +160,7 @@ fun Route.filesRoute(streamDataRepo: StreamDataRepo) {
               HttpStatusCode.OK, FileInfo(
                 name = file.name,
                 size = file.length(),
-                contentType = "application/octet-stream",
+                contentType = playbackContentType(file.name),
                 exists = true,
                 hash = hashWithExt,
                 type = if (isVideo) "video" else "danmu"
@@ -238,6 +229,25 @@ fun Route.filesRoute(streamDataRepo: StreamDataRepo) {
   }
 }
 
-private fun generateFileHash(id: Long, path: String, type: String): String {
+fun streamDataFileHash(path: String): String {
   return path.md5()
+}
+
+fun streamDataHashWithExtension(path: String): String {
+  val fileName = Path.of(path).fileName.toString()
+  val ext = fileName.substringAfterLast('.', "")
+  val hash = streamDataFileHash(path)
+  return if (ext.isBlank()) hash else "$hash.$ext"
+}
+
+fun playbackContentType(fileName: String): String = when (fileName.substringAfterLast('.', "").lowercase()) {
+  "mp4" -> "video/mp4"
+  "flv" -> "video/x-flv"
+  "ts" -> "video/mp2t"
+  "m3u8" -> "application/vnd.apple.mpegurl"
+  "mkv" -> "video/x-matroska"
+  "mov" -> "video/quicktime"
+  "avi" -> "video/x-msvideo"
+  "xml" -> "application/xml"
+  else -> "application/octet-stream"
 }

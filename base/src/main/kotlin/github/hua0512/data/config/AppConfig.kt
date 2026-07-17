@@ -58,6 +58,7 @@ data class AppConfig(
   val twitchConfig: TwitchConfigGlobal = TwitchConfigGlobal(),
   val pandaTvConfig: PandaTvConfigGlobal = PandaTvConfigGlobal(),
   val weiboConfig: WeiboConfigGlobal = WeiboConfigGlobal(),
+  val bilibiliConfig: BilibiliConfigGlobal = BilibiliConfigGlobal(),
   val tlsVerification: Boolean = true,
 ) {
 
@@ -83,6 +84,7 @@ data class AppConfig(
     entity.twitchConfig,
     entity.pandaTvConfig,
     entity.weiboConfig,
+    entity.bilibiliConfig,
     entity.tlsVerification,
   )
 
@@ -109,6 +111,26 @@ data class AppConfig(
     twitchConfig,
     pandaTvConfig,
     weiboConfig,
+    bilibiliConfig,
     tlsVerification,
   )
 }
+
+private const val LOG_REDACTED = "<redacted>"
+
+private fun String?.redactNullableForLog(): String? = if (isNullOrEmpty()) this else LOG_REDACTED
+
+private fun redactStringForLog(value: String): String = if (value.isEmpty()) value else LOG_REDACTED
+
+fun AppConfig.redactedForLog(): AppConfig = copy(
+  huyaConfig = huyaConfig.copy(cookies = huyaConfig.cookies.redactNullableForLog()),
+  douyinConfig = douyinConfig.copy(cookies = douyinConfig.cookies.redactNullableForLog()),
+  douyuConfig = douyuConfig.copy(cookies = douyuConfig.cookies.redactNullableForLog()),
+  twitchConfig = twitchConfig.copy(
+    authToken = redactStringForLog(twitchConfig.authToken),
+    cookies = twitchConfig.cookies.redactNullableForLog(),
+  ),
+  pandaTvConfig = pandaTvConfig.copy(cookies = pandaTvConfig.cookies.redactNullableForLog()),
+  weiboConfig = weiboConfig.copy(cookies = weiboConfig.cookies.redactNullableForLog()),
+  bilibiliConfig = bilibiliConfig.copy(cookies = bilibiliConfig.cookies.redactNullableForLog()),
+)
